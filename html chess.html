@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chess Tournament Roll</title>
+  <link rel="stylesheet" type="text/css" href="0/backups/styles.css">
+  <script>
+    function roll() {
+      var participants = document.getElementById("participants").value.split("\n");
+      
+      // Remove any empty or whitespace-only entries from the participant list
+      participants = participants.filter(function(participant) {
+        return participant.trim() !== "";
+      });
+      
+      // Ensure that there are at least two participants
+      if (participants.length < 2) {
+        alert("Please enter at least two participants.");
+        return;
+      }
+      
+      // Generate the tournament matches in rounds
+      var rounds = participants.length - 1;
+      var matches = [];
+      
+      // Create a copy of participants array for scheduling
+      var schedule = participants.slice();
+      
+      // Generate matches for each round
+      for (var round = 0; round < rounds; round++) {
+        var roundMatches = [];
+        
+        // Match the players based on their position in the schedule array
+        for (var i = 0; i < participants.length / 2; i++) {
+          var match = schedule[i] + " vs " + schedule[participants.length - 1 - i];
+          roundMatches.push(match);
+        }
+        
+        // Rotate the schedule array, excluding the first player
+        var firstPlayer = schedule.shift();
+        schedule.push(schedule.shift());
+        schedule.unshift(firstPlayer);
+        
+        matches.push(roundMatches);
+      }
+      
+      // Display the tournament matches
+      var result = "";
+      matches.forEach(function(roundMatches, roundIndex) {
+        result += "Round " + (roundIndex + 1) + ":\n";
+        roundMatches.forEach(function(match, matchIndex) {
+          result += "Match " + (matchIndex + 1) + ": " + match + "\n";
+        });
+        result += "\n";
+      });
+      
+      document.getElementById("result").innerHTML = result;
+    }
+  </script>
+</head>
+<body>
+  <h1>Chess Tournament Roll</h1>
+  <label for="participants">Enter participants (one per line):</label>
+  <br>
+  <textarea id="participants" rows="5"></textarea>
+  <br>
+  <button onclick="roll()">Roll</button>
+  <pre id="result"></pre>
+</body>
+</html>
